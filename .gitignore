@@ -1,0 +1,15 @@
+# === Global ===
+.env
+.DS_Store
+Thumbs.db
+
+# === Node (backend/frontend) ===
+node_modules/
+dist/
+
+# === Logs ===
+*.log
+
+# === IDE ===
+.vscode/
+.idea/
