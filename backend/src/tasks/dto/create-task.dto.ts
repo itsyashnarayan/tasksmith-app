@@ -1,9 +1,9 @@
 export class CreateTaskDto {
   title: string;
-  description?: string;
-  status?: 'To Do' | 'In Progress' | 'Done';
-  priority?: 'Low' | 'Medium' | 'High';
-  dueDate?: Date;
-  assigneeId?: number;
+  description: string;
+  status?: string;
+  priority?: string;
+  dueDate: string;
+  assigneeId: number;
   projectId: number;
 }

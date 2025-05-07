@@ -6,8 +6,10 @@ import {
   JoinTable,
   ManyToOne,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { Task } from 'src/tasks/entities/task.entity';
 
 @Entity('projects')
 export class Project {
@@ -38,4 +40,7 @@ export class Project {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @OneToMany(() => Task, (task) => task.project)
+  tasks: Task[];
 }

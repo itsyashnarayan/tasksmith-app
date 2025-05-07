@@ -4,14 +4,11 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Project } from 'src/projects/entities/project.entity';
-import { TaskActivity } from 'src/task-activity/task-activity.entity';
-import { OneToMany } from 'typeorm';
 
-@Entity()
+@Entity('tasks')
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;
@@ -19,30 +16,24 @@ export class Task {
   @Column()
   title: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text' })
   description: string;
 
   @Column({ default: 'To Do' })
-  status: 'To Do' | 'In Progress' | 'Done';
+  status: string;
 
   @Column({ default: 'Medium' })
-  priority: 'Low' | 'Medium' | 'High';
+  priority: string;
 
-  @Column({ type: 'timestamp', nullable: true })
-  dueDate: Date;
+  @Column({ type: 'date' })
+  dueDate: string;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User)
   assignee: User;
 
-  @ManyToOne(() => Project, (project) => project.id)
+  @ManyToOne(() => Project, (project) => project.tasks)
   project: Project;
 
   @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @OneToMany(() => TaskActivity, (activity) => activity.task)
-  activities: TaskActivity[];
+  created_at: Date;
 }

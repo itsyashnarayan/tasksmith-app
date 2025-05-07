@@ -1,22 +1,32 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 import { Task } from 'src/tasks/entities/task.entity';
-@Entity()
+
+@Entity('task_activities')
 export class TaskActivity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  taskId: number;
-
-  @Column()
   action: string;
 
   @Column()
-  performedBy: string;
+  field: string;
 
-  @Column()
-  timestamp: Date;
+  @Column({ nullable: true })
+  oldValue: string;
 
-  @ManyToOne(() => Task, (task) => task.activities)
+  @Column({ nullable: true })
+  newValue: string;
+
+  @ManyToOne(() => Task, (task) => task.id)
   task: Task;
+
+  @CreateDateColumn()
+  created_at: Date;
 }
