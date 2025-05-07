@@ -11,8 +11,6 @@ import { ProjectsModule } from './projects/projects.module';
 import { LogsModule } from './logs/logs.module';
 import { TasksModule } from './tasks/tasks.module';
 
-import { User } from './users/entities/user.entity';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,7 +23,7 @@ import { User } from './users/entities/user.entity';
       username: 'postgres',
       password: 'yashpostgres',
       database: 'TaskSmithDB',
-      entities: [User],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     UsersModule,

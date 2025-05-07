@@ -11,6 +11,10 @@ export class UsersService {
     return this.repo.findOne({ where: { email } });
   }
 
+  async findById(id: number): Promise<User | null> {
+    return this.repo.findOne({ where: { id } });
+  }
+
   async create(userData: Partial<User>): Promise<User> {
     const user = this.repo.create(userData);
     return this.repo.save(user);
