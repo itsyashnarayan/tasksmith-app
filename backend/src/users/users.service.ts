@@ -23,4 +23,8 @@ export class UsersService {
   async findAll(): Promise<User[]> {
     return this.repo.find();
   }
+
+  async remove(id: number): Promise<void> {
+    await this.repo.delete(id);
+  }
 }
