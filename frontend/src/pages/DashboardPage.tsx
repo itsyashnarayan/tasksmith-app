@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Card,
@@ -10,23 +10,41 @@ import {
   ListItemText,
   CardActionArea,
 } from '@mui/material';
-
-const dashboardData = [
-  {
-    title: 'Users',
-    items: ['Alice Johnson', 'Bob Smith', 'Charlie Davis'],
-  },
-  {
-    title: 'Projects',
-    items: ['Website Redesign', 'Internal Tooling', 'Marketing Launch'],
-  },
-  {
-    title: 'Tasks',
-    items: ['Create wireframes', 'Set up DB schema', 'JWT integration'],
-  },
-];
+import { useNavigate } from 'react-router-dom';
+import API from '../services/axios';
 
 const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [users, setUsers] = useState<string[]>([]);
+  const [projects, setProjects] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [usersRes, projectsRes, tasksRes] = await Promise.all([
+          API.get('/users'),
+          API.get('/projects'),
+          API.get('/tasks'),
+        ]);
+
+        setUsers(usersRes.data.map((u: any) => u.display_name).slice(0, 4));
+        setProjects(projectsRes.data.map((p: any) => p.name).slice(0, 4));
+        setTasks(tasksRes.data.map((t: any) => t.title).slice(0, 4));
+      } catch (error) {
+        console.error('Error loading dashboard data', error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const dashboardData = [
+    { title: 'Users', items: users, path: '/admin/users' },
+    { title: 'Projects', items: projects, path: '/admin/projects' },
+    { title: 'Tasks', items: tasks, path: '/admin/tasks' },
+  ];
+
   return (
     <Box>
       <Typography variant="h5" fontWeight="bold" mb={3}>
@@ -42,7 +60,7 @@ const DashboardPage: React.FC = () => {
       >
         {dashboardData.map((section, index) => (
           <Card key={index} sx={{ height: '100%' }}>
-            <CardActionArea>
+            <CardActionArea onClick={() => navigate(section.path)}>
               <CardHeader
                 title={section.title}
                 sx={{

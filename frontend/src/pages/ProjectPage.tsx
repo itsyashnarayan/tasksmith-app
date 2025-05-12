@@ -18,7 +18,8 @@ import {
     MenuItem,
   } from '@mui/material';
   import { Add, Edit, Delete } from '@mui/icons-material';
-  import { useState } from 'react';
+  import { useEffect, useState } from 'react';
+  import API from '../services/axios'; // Axios instance with baseURL + auth
   
   interface Project {
     id: number;
@@ -32,22 +33,9 @@ import {
   }
   
   const mockManagers = ['Alice', 'Bob', 'Charlie'];
-  const mockTeamMembers = ['Eve', 'Frank', 'Grace'];
   
   const ProjectsPage = () => {
-    const [projects, setProjects] = useState<Project[]>([
-      {
-        id: 1,
-        name: 'TaskSmith',
-        description: 'Frontend & backend planning',
-        status: 'PLANNED',
-        startDate: '2025-05-10',
-        endDate: '2025-06-10',
-        manager: 'Alice',
-        teamMembers: ['Eve'],
-      },
-    ]);
-  
+    const [projects, setProjects] = useState<Project[]>([]);
     const [open, setOpen] = useState(false);
     const [editingProject, setEditingProject] = useState<Project | null>(null);
   
@@ -60,6 +48,12 @@ import {
       manager: '',
       teamMembers: [],
     });
+  
+    useEffect(() => {
+      API.get('/api/projects')
+        .then((res) => setProjects(res.data))
+        .catch((err) => console.error('Failed to fetch projects:', err));
+    }, []);
   
     const handleOpen = (project?: Project) => {
       if (project) {
@@ -80,36 +74,37 @@ import {
       setOpen(true);
     };
   
-    const handleClose = () => {
-      setOpen(false);
-    };
+    const handleClose = () => setOpen(false);
   
     const handleSave = () => {
       if (editingProject) {
-        // Edit existing project
-        setProjects((prev) =>
-          prev.map((p) =>
-            p.id === editingProject.id ? { ...editingProject, ...form } : p
-          )
-        );
+        API.put(`/api/projects/${editingProject.id}`, form)
+          .then((res) => {
+            setProjects((prev) =>
+              prev.map((p) => (p.id === editingProject.id ? res.data : p))
+            );
+            handleClose();
+          })
+          .catch((err) => console.error('Update failed:', err));
       } else {
-        // Add new project
-        const newProject: Project = {
-          id: Date.now(),
-          ...form,
-        };
-        setProjects((prev) => [...prev, newProject]);
+        API.post('/api/projects', form)
+          .then((res) => {
+            setProjects((prev) => [...prev, res.data]);
+            handleClose();
+          })
+          .catch((err) => console.error('Create failed:', err));
       }
-      handleClose();
     };
   
     const handleDelete = (id: number) => {
-      setProjects((prev) => prev.filter((p) => p.id !== id));
+      API.delete(`/api/projects/${id}`)
+        .then(() => setProjects((prev) => prev.filter((p) => p.id !== id)))
+        .catch((err) => console.error('Delete failed:', err));
     };
   
     return (
       <Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box display="flex" justifyContent="space-between" mb={3}>
           <Typography variant="h5" fontWeight="bold">
             Projects
           </Typography>
@@ -156,27 +151,16 @@ import {
           </Table>
         </TableContainer>
   
-        {/* Project Form Modal */}
-        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
           <DialogTitle>{editingProject ? 'Edit Project' : 'Add Project'}</DialogTitle>
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            <TextField
-              label="Name"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              fullWidth
-            />
-            <TextField
-              label="Description"
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              fullWidth
-            />
+            <TextField label="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} fullWidth />
+            <TextField label="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} fullWidth />
             <TextField
               label="Status"
+              select
               value={form.status}
               onChange={(e) => setForm({ ...form, status: e.target.value })}
-              select
               fullWidth
             >
               {['PLANNED', 'IN_PROGRESS', 'COMPLETED'].map((status) => (
@@ -185,25 +169,13 @@ import {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField
-              label="Start Date"
-              type="date"
-              value={form.startDate}
-              onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="End Date"
-              type="date"
-              value={form.endDate}
-              onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-            />
+            <TextField label="Start Date" type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} InputLabelProps={{ shrink: true }} />
+            <TextField label="End Date" type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} InputLabelProps={{ shrink: true }} />
             <TextField
               label="Manager"
+              select
               value={form.manager}
               onChange={(e) => setForm({ ...form, manager: e.target.value })}
-              select
               fullWidth
             >
               {mockManagers.map((m) => (
@@ -216,16 +188,14 @@ import {
               label="Team Members (comma-separated)"
               value={form.teamMembers.join(', ')}
               onChange={(e) =>
-                setForm({ ...form, teamMembers: e.target.value.split(',').map(t => t.trim()) })
+                setForm({ ...form, teamMembers: e.target.value.split(',').map((t) => t.trim()) })
               }
               fullWidth
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button variant="contained" onClick={handleSave}>
-              Save
-            </Button>
+            <Button variant="contained" onClick={handleSave}>Save</Button>
           </DialogActions>
         </Dialog>
       </Box>
