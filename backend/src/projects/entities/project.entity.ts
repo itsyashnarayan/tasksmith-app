@@ -9,9 +9,8 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Task } from 'src/tasks/entities/task.entity';
-
+import { User } from '../../users/entities/user.entity';
+import { Task } from '../../tasks/entities/task.entity';
 @Entity('projects')
 export class Project {
   @PrimaryGeneratedColumn()

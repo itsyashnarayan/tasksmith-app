@@ -5,7 +5,6 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // 🔧 Fix CORS to allow preflight OPTIONS request and credentials
   app.enableCors({
     origin: 'http://localhost:3000',
     credentials: true,

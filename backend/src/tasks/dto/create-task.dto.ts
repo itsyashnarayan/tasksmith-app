@@ -4,6 +4,6 @@ export class CreateTaskDto {
   status?: string;
   priority?: string;
   dueDate: string;
-  assigneeId: number;
+  assigneeIds: number[];
   projectId: number;
 }

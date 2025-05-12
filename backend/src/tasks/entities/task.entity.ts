@@ -4,34 +4,37 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Project } from 'src/projects/entities/project.entity';
+import { User } from '../../users/entities/user.entity';
+import { Project } from '../../projects/entities/project.entity';
 
 @Entity('tasks')
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 100 })
   title: string;
 
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ default: 'To Do' })
+  @Column({ length: 20, default: 'To Do' })
   status: string;
 
-  @Column({ default: 'Medium' })
+  @Column({ length: 20, default: 'Medium' })
   priority: string;
 
   @Column({ type: 'date' })
   dueDate: string;
 
-  @ManyToOne(() => User)
-  assignee: User;
+  @ManyToMany(() => User, { eager: true })
+  @JoinTable({ name: 'task_assignees' }) // join table for many-to-many
+  assignees: User[];
 
-  @ManyToOne(() => Project, (project) => project.tasks)
+  @ManyToOne(() => Project, (project) => project.tasks, { onDelete: 'CASCADE' })
   project: Project;
 
   @CreateDateColumn()
