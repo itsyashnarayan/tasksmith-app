@@ -7,6 +7,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Task } from 'src/tasks/entities/task.entity';
@@ -31,7 +32,8 @@ export class Project {
   @Column({ type: 'date' })
   endDate: string;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, eager: true })
+  @JoinColumn({ name: 'managerId' })
   manager: User;
 
   @ManyToMany(() => User)
