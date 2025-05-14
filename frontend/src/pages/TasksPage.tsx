@@ -119,8 +119,10 @@ const TaskPage = () => {
         dueDate: task.dueDate,
         assigneeIds: task.assignees.map(u => u.id),
       });
+      // ✅ Sync: Refresh tasks and project teams
+      await fetchTasks();
+      await fetchProjects();
       setEditId(null);
-      fetchTasks();
     }
   };
 
@@ -132,7 +134,9 @@ const TaskPage = () => {
     };
     try {
       await API.post('/tasks', payload);
-      fetchTasks();
+      // ✅ Sync: Refresh tasks and project teams
+      await fetchTasks();
+      await fetchProjects();
       setForm({ title: '', description: '', status: 'TO_DO', dueDate: '', projectId: '', assigneeIds: [] });
       setOpenDialog(false);
     } catch (err) {

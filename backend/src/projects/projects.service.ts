@@ -93,4 +93,8 @@ export class ProjectsService {
       relations: ['manager', 'members'],
     });
   }
+
+  save(project: Project): Promise<Project> {
+    return this.projectRepository.save(project);
+  }
 }

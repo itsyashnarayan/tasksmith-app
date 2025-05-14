@@ -39,8 +39,21 @@ export class TasksService {
       assignees,
       project,
     });
+    const savedTask = await this.taskRepo.save(task);
+    const allTasks = await this.taskRepo.find({
+      where: { project: { id: savedTask.project.id } },
+      relations: ['assignees'],
+    });
+    const uniqueAssigneeIds = Array.from(
+      new Set(allTasks.flatMap((t) => t.assignees.map((a) => a.id))),
+    );
+    const uniqueAssignees = await Promise.all(
+      uniqueAssigneeIds.map((id) => this.usersService.findById(id)),
+    );
 
-    return this.taskRepo.save(task);
+    savedTask.project.members = uniqueAssignees.filter((u): u is User => !!u);
+    await this.projectsService.save(savedTask.project);
+    return savedTask;
   }
 
   findAll(): Promise<Task[]> {
@@ -102,7 +115,24 @@ export class TasksService {
 
     Object.assign(task, updates);
     await this.activityRepo.save(logs);
-    return this.taskRepo.save(task);
+    const savedTask = await this.taskRepo.save(task);
+    const allTasks = await this.taskRepo.find({
+      where: { project: { id: savedTask.project.id } },
+      relations: ['assignees'],
+    });
+
+    const uniqueAssigneeIds = Array.from(
+      new Set(allTasks.flatMap((t) => t.assignees.map((a) => a.id))),
+    );
+
+    const uniqueAssignees = await Promise.all(
+      uniqueAssigneeIds.map((id) => this.usersService.findById(id)),
+    );
+
+    savedTask.project.members = uniqueAssignees.filter((u): u is User => !!u);
+    await this.projectsService.save(savedTask.project);
+
+    return savedTask;
   }
 
   async remove(id: number): Promise<void> {
