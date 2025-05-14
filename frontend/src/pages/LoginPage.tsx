@@ -8,15 +8,15 @@ import {
   Link,
 } from '@mui/material';
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/axios';
-import { jwtDecode
+import { jwtDecode } from 'jwt-decode';
+import { useAuthStore } from '../store/useAuthStore'; // ⬅️ Zustand import
 
- } from 'jwt-decode';
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser); // ⬅️ Zustand function
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -26,17 +26,26 @@ const LoginPage = () => {
     try {
       const res = await API.post('/auth/login', credentials);
       const { access_token } = res.data;
-  
-      // Decode token to get user details
+
       const decoded: any = jwtDecode(access_token);
-  
+      console.log(decoded); // Check what fields are present in token
+
+      const user = {
+        id: decoded.sub, // or decoded.id if your backend uses 'id'
+        email: decoded.email,
+        role: decoded.role,
+        display_name: decoded.display_name,
+      };
+
       localStorage.setItem('token', access_token);
-      localStorage.setItem('role', decoded.role);  // ✅ Now available
-      localStorage.setItem('user', JSON.stringify(decoded));
-  
+      localStorage.setItem('role', user.role);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      useAuthStore.getState().setUser(user); // update Zustand too
+
       // Redirect based on role
-      if (decoded.role === 'ADMIN') navigate('/dashboard');
-      else if (decoded.role === 'MANAGER') navigate('/projects');
+      if (user.role === 'ADMIN') navigate('/dashboard');
+      else if (user.role === 'MANAGER') navigate('/projects');
       else navigate('/tasks');
     } catch (err) {
       alert('Invalid credentials. Try again.');

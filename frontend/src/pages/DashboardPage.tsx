@@ -9,15 +9,24 @@ import {
   ListItem,
   ListItemText,
   CardActionArea,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/axios';
+import { useAuthStore } from '../store/useAuthStore';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<string[]>([]);
   const [projects, setProjects] = useState<string[]>([]);
   const [tasks, setTasks] = useState<string[]>([]);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const currentUser = useAuthStore((state) => state.user);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -45,6 +54,14 @@ const DashboardPage: React.FC = () => {
     { title: 'Tasks', items: tasks, path: '/admin/tasks' },
   ];
 
+  const handleCardClick = (path: string) => {
+    if (currentUser?.role === 'ADMIN') {
+      navigate(path);
+    } else {
+      setOpenDialog(true);
+    }
+  };
+
   return (
     <Box>
       <Typography variant="h5" fontWeight="bold" mb={3}>
@@ -60,7 +77,7 @@ const DashboardPage: React.FC = () => {
       >
         {dashboardData.map((section, index) => (
           <Card key={index} sx={{ height: '100%' }}>
-            <CardActionArea onClick={() => navigate(section.path)}>
+            <CardActionArea onClick={() => handleCardClick(section.path)}>
               <CardHeader
                 title={section.title}
                 sx={{
@@ -81,6 +98,19 @@ const DashboardPage: React.FC = () => {
           </Card>
         ))}
       </Box>
+
+      {/* Dialog for non-admin users */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Access Denied</DialogTitle>
+        <DialogContent>
+          <Typography>Only ADMIN can access this page.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

@@ -86,4 +86,11 @@ export class ProjectsService {
     const project = await this.findOne(id);
     await this.projectRepository.remove(project);
   }
+
+  async findByManagerId(managerId: number) {
+    return this.projectRepository.find({
+      where: { manager: { id: managerId } },
+      relations: ['manager', 'members'],
+    });
+  }
 }

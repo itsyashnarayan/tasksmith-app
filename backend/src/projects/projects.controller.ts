@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -22,7 +23,10 @@ export class ProjectsController {
   }
 
   @Get()
-  findAll() {
+  findAll(@Query('managerId') managerId?: number) {
+    if (managerId) {
+      return this.projectsService.findByManagerId(managerId);
+    }
     return this.projectsService.findAll();
   }
 
