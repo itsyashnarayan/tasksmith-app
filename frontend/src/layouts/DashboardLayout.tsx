@@ -28,7 +28,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import React, { useState } from 'react';
 import useStore from '../store/useStore';
-import { useAuthStore } from '../store/useAuthStore'; // <- Import your auth store
+import { useAuthStore } from '../store/useAuthStore'; 
 
 const expandedWidth = 200;
 const collapsedWidth = 60;
@@ -47,8 +47,7 @@ const DashboardLayout = () => {
   const isSidebarOpen = useStore((s) => s.isSidebarOpen);
   const toggleSidebar = useStore((s) => s.toggleSidebar);
 
-  const { user, logout } = useAuthStore(); // Assuming your store has both
-
+  const { user, logout } = useAuthStore(); 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -57,8 +56,8 @@ const DashboardLayout = () => {
   };
   const handleClose = () => setAnchorEl(null);
   const handleLogout = () => {
-    logout(); // call from store
-    navigate('/login'); // or your login route
+    logout(); 
+    navigate('/login'); 
     setAnchorEl(null);
   };
 

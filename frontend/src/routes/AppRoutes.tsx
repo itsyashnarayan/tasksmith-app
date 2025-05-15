@@ -10,7 +10,7 @@ import AdminProjectPage from '../pages/AdminProjectPage';
 import AdminTaskPage from '../pages/AdminTaskPage';
 
 const AppRoutes = () => {
-  const role = localStorage.getItem('role'); // Make sure this is set on login
+  const role = localStorage.getItem('role'); 
   const isAdmin = localStorage.getItem('role') === 'ADMIN';
 
   return (

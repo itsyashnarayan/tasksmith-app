@@ -18,7 +18,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const stored = JSON.parse(localStorage.getItem('user') || 'null');
       if (stored && stored.email && !stored.display_name) {
-        stored.display_name = stored.email.split('@')[0]; // fallback
+        stored.display_name = stored.email.split('@')[0]; 
       }
       return stored;
     } catch {
@@ -27,7 +27,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   })(),
 
   setUser: (user: User) => {
-    // fallback to display_name if not provided
     const enrichedUser = {
       ...user,
       display_name: user.display_name || user.email.split('@')[0],

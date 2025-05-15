@@ -14,7 +14,6 @@ const Header = ({ onToggleSidebar }: { onToggleSidebar: () => void }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  // Hardcoded test user
   const user = {
     name: 'Yash',
     role: 'ADMIN',
@@ -31,14 +30,13 @@ const Header = ({ onToggleSidebar }: { onToggleSidebar: () => void }) => {
   const handleLogout = () => {
     console.log('Logging out...');
     setAnchorEl(null);
-    // Add actual logout logic here if needed
   };
 
   return (
     <AppBar
       position="fixed"
       sx={{
-        backgroundColor: '#ff1744 !important', // bright red override
+        backgroundColor: '#ff1744 !important',
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >

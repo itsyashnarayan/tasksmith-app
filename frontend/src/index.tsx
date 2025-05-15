@@ -21,7 +21,7 @@ const AppWrapper = () => {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>       {/* ✅ Wrap your app here */}
+    <BrowserRouter>       
       <App />
     </BrowserRouter>
   </React.StrictMode>

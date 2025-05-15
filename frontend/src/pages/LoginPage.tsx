@@ -11,12 +11,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/axios';
 import { jwtDecode } from 'jwt-decode';
-import { useAuthStore } from '../store/useAuthStore'; // ⬅️ Zustand import
+import { useAuthStore } from '../store/useAuthStore'; 
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser); // ⬅️ Zustand function
+  const setUser = useAuthStore((state) => state.setUser);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -28,10 +28,10 @@ const LoginPage = () => {
       const { access_token } = res.data;
 
       const decoded: any = jwtDecode(access_token);
-      console.log(decoded); // Check what fields are present in token
+      console.log(decoded); 
 
       const user = {
-        id: decoded.sub, // or decoded.id if your backend uses 'id'
+        id: decoded.sub, 
         email: decoded.email,
         role: decoded.role,
         display_name: decoded.display_name,
@@ -41,7 +41,7 @@ const LoginPage = () => {
       localStorage.setItem('role', user.role);
       localStorage.setItem('user', JSON.stringify(user));
 
-      useAuthStore.getState().setUser(user); // update Zustand too
+      useAuthStore.getState().setUser(user);
 
       // Redirect based on role
       if (user.role === 'ADMIN') navigate('/dashboard');
