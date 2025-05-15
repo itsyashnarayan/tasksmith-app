@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeepPartial } from 'typeorm';
-import { Project } from './entities/project.entity';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/entities/user.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, DeepPartial } from "typeorm";
+import { Project } from "./entities/project.entity";
+import { CreateProjectDto } from "./dto/create-project.dto";
+import { UpdateProjectDto } from "./dto/update-project.dto";
+import { UsersService } from "src/users/users.service";
+import { User } from "src/users/entities/user.entity";
 
 @Injectable()
 export class ProjectsService {
@@ -26,8 +26,8 @@ export class ProjectsService {
 
     const project = this.projectRepository.create({
       name: dto.name,
-      description: dto.description || '',
-      status: dto.status || 'PLANNED',
+      description: dto.description || "",
+      status: dto.status || "PLANNED",
       startDate: dto.startDate,
       endDate: dto.endDate,
       members,
@@ -39,16 +39,16 @@ export class ProjectsService {
 
   async findAll(): Promise<Project[]> {
     return this.projectRepository.find({
-      relations: ['manager', 'members'],
+      relations: ["manager", "members"],
     });
   }
 
   async findOne(id: number): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: { id },
-      relations: ['members', 'manager'],
+      relations: ["members", "manager"],
     });
-    if (!project) throw new NotFoundException('Project not found');
+    if (!project) throw new NotFoundException("Project not found");
     return project;
   }
 
@@ -90,7 +90,7 @@ export class ProjectsService {
   async findByManagerId(managerId: number) {
     return this.projectRepository.find({
       where: { manager: { id: managerId } },
-      relations: ['manager', 'members'],
+      relations: ["manager", "members"],
     });
   }
 

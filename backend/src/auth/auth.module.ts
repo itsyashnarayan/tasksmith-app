@@ -11,7 +11,7 @@ import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    ConfigModule, // ✅ Loads environment variables
+    ConfigModule, 
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
